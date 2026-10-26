@@ -66,7 +66,7 @@ Seasonality is built in too: HAVEN is busiest in summer, the city restaurants di
 data_generator/   generate_data.py (creates the data) and check_findings.py (verifies the findings)
 data/             generated CSV (not committed; recreate it with the generator)
 snowflake/        SQL to set up the database, role, warehouse and table, and to load the data
-agent/            semantic view and agent instructions (coming)
+agent/            semantic view (fork_visits_semantic.yaml); agent instructions coming
 app/              Streamlit frontend (coming)
 ```
 
@@ -86,11 +86,13 @@ app/              Streamlit frontend (coming)
 
 3. **Load the data**: follow `snowflake/02_load_data.sql` (Snowsight upload or `PUT`/`COPY`) and run the checks at the bottom.
 
+4. **Create the semantic view**: follow `snowflake/03_semantic_view.sql` to create `FORK_VISITS_SEMANTIC` from `agent/fork_visits_semantic.yaml` (upload in Snowsight or paste into SQL), then grant it to `GENERAL_AGENT_ROLE`.
+
 ## Status
 
 - [x] Synthetic data and findings
 - [x] Snowflake setup and loading SQL
-- [ ] Semantic view
+- [x] Semantic view
 - [ ] Agent instructions and agent
 - [ ] Streamlit app with configurable branding
 - [ ] Deploy
