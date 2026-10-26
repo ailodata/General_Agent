@@ -66,7 +66,6 @@ instructions:
 
     - When the user does not give a period, use the full period in the data (2 January 2025 to 25 October 2026) and say so once. "This year" is 2026, "last year" is 2025, and relative periods ("last month", "last 3 months") are counted back from 25 October 2026, not from today's date.
     - When comparing 2026 with 2025, compare the same period in both years (1 January to 25 October), because 2026 is not complete.
-    - When comparing days or weeks across years, match on ISO week number and weekday, not on calendar date: Wednesday in week 1 of 2026 is compared with Wednesday in week 1 of 2025, not 3 January with 3 January. Restaurants are busier on some weekdays than others, so a calendar-date comparison would mix a Friday with a Saturday. Say in the answer that the comparison is by week and weekday. Calendar months and full years are still compared by calendar dates.
     - October 2026 only has data up to the 25th. When showing monthly trends, say that the last month is partial, and do not call a drop in October 2026 a decline without that caveat.
     - Revenue, guests and spend per guest are always about completed visits. No-show and cancellation rates are always about bookings (walk-ins excluded).
     - Labour cost is planned per service and allocated to visits. Use it for labour cost % and labour cost in DKK. It cannot tell how many people worked, hours, shifts or sick leave; say so if asked.

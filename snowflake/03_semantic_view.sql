@@ -5,9 +5,6 @@
 
 USE WAREHOUSE GENERAL_AGENT_WH;
 
--- Replace an existing version (the GRANT below restores the agent role's access)
-DROP SEMANTIC VIEW IF EXISTS GENERAL_AGENT_DEMO.RESTAURANT.FORK_VISITS_SEMANTIC;
-
 CALL SYSTEM$CREATE_SEMANTIC_VIEW_FROM_YAML(
   'GENERAL_AGENT_DEMO.RESTAURANT',
   $$
@@ -345,8 +342,6 @@ module_custom_instructions:
 
     When comparing 2026 with 2025, compare the same period in both years (1 January to 25 October), because 2026 is not complete. Say which period the comparison covers.
 
-    When comparing days or weeks across years, match on ISO week and weekday, never on calendar date. Use YEAROFWEEKISO(VISIT_DATE), WEEKISO(VISIT_DATE) and DAYOFWEEKISO(VISIT_DATE): Wednesday of ISO week 1 in 2026 is compared with Wednesday of ISO week 1 in 2025. Group by WEEKISO and DAYOFWEEKISO with one column per ISO year, and show the date in each year next to the weekday. Calendar months, quarters and full years are still compared by calendar dates.
-
     A restaurant with no rows on a date was closed that day (VERDE and EMBER close on Mondays, BISTRO 33 on Sundays, and all restaurants close on 24, 25 and 31 December and 1 January). For averages per day, divide by the number of distinct dates the restaurant had visits, not by calendar days.
 
     For weekday analysis use DAYNAME(VISIT_DATE) and order Monday to Sunday with DAYOFWEEKISO(VISIT_DATE). For monthly trends use DATE_TRUNC('month', VISIT_DATE).
@@ -475,41 +470,6 @@ verified_queries:
         ROUND(100.0 * (revenue_2026 - revenue_2025) / NULLIF(revenue_2025, 0), 1) AS growth_pct
       FROM by_year
       ORDER BY growth_pct DESC;
-    verified_at: 1793012400
-    verified_by: AILO
-    use_as_onboarding_question: false
-  - name: '"How did last week compare with the same week last year, day by day?"'
-    question: How did last week compare with the same week last year, day by day?
-    sql: |-
-      WITH days AS (
-        SELECT
-          YEAROFWEEKISO(visit_date) AS iso_year,
-          WEEKISO(visit_date) AS iso_week,
-          DAYOFWEEKISO(visit_date) AS weekday_number,
-          DAYNAME(visit_date) AS weekday,
-          visit_date,
-          SUM(total_revenue) AS revenue,
-          SUM(guests) AS guests
-        FROM visits
-        WHERE status = 'completed'
-          AND WEEKISO(visit_date) = 43
-          AND YEAROFWEEKISO(visit_date) IN (2025, 2026)
-        GROUP BY iso_year, iso_week, weekday_number, weekday, visit_date
-      )
-      SELECT
-        iso_week,
-        weekday,
-        MAX(CASE WHEN iso_year = 2026 THEN visit_date END) AS date_2026,
-        MAX(CASE WHEN iso_year = 2025 THEN visit_date END) AS date_2025,
-        ROUND(MAX(CASE WHEN iso_year = 2026 THEN revenue END)) AS revenue_2026_dkk,
-        ROUND(MAX(CASE WHEN iso_year = 2025 THEN revenue END)) AS revenue_2025_dkk,
-        ROUND(100.0 * (MAX(CASE WHEN iso_year = 2026 THEN revenue END) - MAX(CASE WHEN iso_year = 2025 THEN revenue END))
-          / NULLIF(MAX(CASE WHEN iso_year = 2025 THEN revenue END), 0), 1) AS revenue_change_pct,
-        MAX(CASE WHEN iso_year = 2026 THEN guests END) AS guests_2026,
-        MAX(CASE WHEN iso_year = 2025 THEN guests END) AS guests_2025
-      FROM days
-      GROUP BY iso_week, weekday, weekday_number
-      ORDER BY weekday_number;
     verified_at: 1793012400
     verified_by: AILO
     use_as_onboarding_question: false

@@ -40,9 +40,6 @@ def build_semantic_view():
 
 USE WAREHOUSE {WAREHOUSE};
 
--- Replace an existing version (the GRANT below restores the agent role's access)
-DROP SEMANTIC VIEW IF EXISTS {SEMANTIC_VIEW};
-
 CALL SYSTEM$CREATE_SEMANTIC_VIEW_FROM_YAML(
   'GENERAL_AGENT_DEMO.RESTAURANT',
   $$
