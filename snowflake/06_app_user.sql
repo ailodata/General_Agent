@@ -19,9 +19,9 @@ CREATE AUTHENTICATION POLICY IF NOT EXISTS GENERAL_AGENT_DEMO.RESTAURANT.FORK_AP
   PAT_POLICY = (NETWORK_POLICY_EVALUATION = ENFORCED_NOT_REQUIRED);
 ALTER USER FORK_APP_USER SET AUTHENTICATION POLICY GENERAL_AGENT_DEMO.RESTAURANT.FORK_APP_PAT_POLICY;
 
--- 3. The token, limited to the role, valid for 90 days. Copy the token_secret from the output now.
+-- 3. The token, limited to the role, valid for 365 days (the account maximum by default). Copy the token_secret from the output now.
 ALTER USER FORK_APP_USER
   ADD PROGRAMMATIC ACCESS TOKEN FORK_APP_TOKEN
   ROLE_RESTRICTION = 'FORK_COWORK_USER'
-  DAYS_TO_EXPIRY = 90
+  DAYS_TO_EXPIRY = 365
   COMMENT = 'Streamlit app for the FORK demo agent';
