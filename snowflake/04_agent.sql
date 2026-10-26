@@ -14,7 +14,7 @@ models:
 
 orchestration:
   budget:
-    seconds: 120
+    seconds: 300
     tokens: 32000
 
 instructions:
