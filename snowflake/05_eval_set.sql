@@ -7,11 +7,11 @@ USE WAREHOUSE GENERAL_AGENT_WH;
 
 CREATE OR REPLACE TABLE GENERAL_AGENT_DEMO.RESTAURANT.FORK_AGENT_EVAL (
   INPUT_QUERY  VARCHAR,
-  GROUND_TRUTH OBJECT
+  GROUND_TRUTH VARIANT
 );
 
 INSERT INTO GENERAL_AGENT_DEMO.RESTAURANT.FORK_AGENT_EVAL (INPUT_QUERY, GROUND_TRUTH)
-SELECT q, OBJECT_CONSTRUCT('ground_truth_output', a)
+SELECT q, PARSE_JSON(OBJECT_CONSTRUCT('ground_truth_output', a)::VARCHAR)
 FROM VALUES
   ('How is each restaurant performing this year?', 'Covers 1 January to 25 October 2026 and shows one row per restaurant (all seven) with revenue, guests, spend per guest and cost percentages. HAVEN has the highest revenue (about DKK 25.0m), followed by EMBER (about DKK 22.5m) and LIVO (about DKK 21.0m); MORGEN is lowest (about DKK 8.1m). EMBER has the highest spend per guest (about DKK 698) and MORGEN the lowest (about DKK 264). MARE has the highest prime cost (about 68.4%) and LIVO the lowest (about 54.8%).'),
   ('Which restaurant has the highest labour cost percentage, and how does it develop month by month?', 'Over the full period (2 January 2025 to 25 October 2026) MORGEN has the highest labour cost % at about 35.5%, followed by VERDE (about 33.5%), MARE (about 32.6%) and HAVEN (about 32.5%); LIVO is lowest (about 29.1%). The monthly development is shown as a line chart or table by month and says that October 2026 is a partial month.'),
