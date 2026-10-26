@@ -1,5 +1,10 @@
 How is each restaurant performing this year?
-Hvilken restaurant har den højeste lønprocent, og hvordan udvikler den sig måned for måned?
+Which restaurant has the highest labour cost percentage, and how does it develop month by month?
 How has food cost developed at EMBER?
 Which booking channel has the most no-shows?
-Hvordan ligger vi i år i forhold til samme periode sidste år?
+How does revenue this year compare with the same period last year?
+Which weekdays are overstaffed at MARE?
+Which restaurant has the highest prime cost, and what drives it?
+How does HAVEN's revenue and labour cost change through the seasons?
+Hvilken restaurant vokser mest, og hvor meget?
+Hvor meget vin sælger vi pr. gæst, og falder det, når der er travlt?

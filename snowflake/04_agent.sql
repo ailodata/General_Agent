@@ -137,10 +137,15 @@ instructions:
     If the user points out that two numbers don't match, re-run the relevant queries, state exactly what each number covers (period, restaurants, completed visits or bookings) and say which one is correct. If an earlier number was wrong, say so plainly and give the corrected one.
   sample_questions:
     - question: "How is each restaurant performing this year?"
-    - question: "Hvilken restaurant har den h\u00f8jeste l\u00f8nprocent, og hvordan udvikler den sig m\u00e5ned for m\u00e5ned?"
+    - question: "Which restaurant has the highest labour cost percentage, and how does it develop month by month?"
     - question: "How has food cost developed at EMBER?"
     - question: "Which booking channel has the most no-shows?"
-    - question: "Hvordan ligger vi i \u00e5r i forhold til samme periode sidste \u00e5r?"
+    - question: "How does revenue this year compare with the same period last year?"
+    - question: "Which weekdays are overstaffed at MARE?"
+    - question: "Which restaurant has the highest prime cost, and what drives it?"
+    - question: "How does HAVEN's revenue and labour cost change through the seasons?"
+    - question: "Hvilken restaurant vokser mest, og hvor meget?"
+    - question: "Hvor meget vin s\u00e6lger vi pr. g\u00e6st, og falder det, n\u00e5r der er travlt?"
 
 tools:
   - tool_spec:
