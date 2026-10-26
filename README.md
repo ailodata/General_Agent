@@ -1,38 +1,64 @@
 # General_Agent
 
-A demo of AILO's marketing analytics agent, built on **synthetic data**, for sales and marketing.
+A demo of AILO's analytics agent, built on **synthetic data**, for sales and marketing.
 
-The agent lets marketing people ask questions about their website in plain language, such as *"Which channels convert best?"*, *"What content drives bookings?"* or *"How long do Swedish guests take to book?"*. It answers with numbers, tables and charts. The demo is the same kind of agent we build for clients, but runs on invented data so it can be shown to anyone.
+The agent lets people ask questions about their business in plain language, such as *"Which restaurant has the highest labour cost?"*, *"How many no-shows do we get from the booking portal?"* or *"How has food cost developed at EMBER this year?"*. It answers with numbers, tables and charts. The demo is the same kind of agent we build for clients, but runs on invented data so it can be shown to anyone.
 
 **No real company or customer data is used anywhere in this repo.**
 
-## The case: Bistro Lind
+## The case: FORK
 
-Bistro Lind is a fictional Nordic restaurant chain with six restaurants (Copenhagen, Aarhus, Stockholm, Gothenburg, Oslo, Bergen) and a website in English, Danish, Swedish and Norwegian. The data covers 1 April to 18 October 2026: about 93,000 pageviews, 3,300 conversions, 33,000 visitors and 43,000 sessions.
+FORK is a fictional Danish restaurant group with seven restaurants:
 
-Visitors can convert in five ways:
+| Restaurant | Concept | City | Services |
+|---|---|---|---|
+| LIVO | Italian | Copenhagen | lunch, dinner |
+| VERDE | Plant-based | Copenhagen | lunch, dinner (closed Mondays) |
+| MORGEN | Brunch & café | Aarhus | brunch |
+| HAVEN | Harbour terrace | Aarhus | lunch, dinner |
+| BISTRO 33 | French bistro | Odense | lunch, dinner (closed Sundays) |
+| EMBER | Grill & steak | Copenhagen | dinner (closed Mondays) |
+| MARE | Seafood | Aalborg | dinner |
 
-| Conversion | Value |
+The data covers 2 January 2025 to 25 October 2026: about 191,000 visits, of which 173,000 were completed, with 572,000 guests and about DKK 259 million in revenue. All restaurants are closed on 24, 25 and 31 December and 1 January.
+
+## The table: `VISITS`
+
+One row per table or party: a booking, a walk-in, a cancellation or a no-show. Amounts are in DKK ex VAT and are only filled in for completed visits.
+
+| Group | Columns |
 |---|---|
-| Table Booked | party size × €35 |
-| Gift Card Purchased | €50, €100 or €150 |
-| Catering Enquiry | estimated €600–3,500 |
-| Loyalty Signup (Lind Club) | none |
-| Newsletter Signup | none |
+| Restaurant | `RESTAURANT`, `CONCEPT`, `CITY` |
+| Visit | `VISIT_ID`, `VISIT_DATE`, `VISIT_TIME`, `SERVICE` (brunch, lunch, dinner), `GUESTS`, `STATUS` (completed, cancelled, no_show) |
+| Booking | `BOOKING_CHANNEL` (website, phone, booking_portal, walk_in), `BOOKING_ID`, `BOOKED_AT`, `OCCASION` (none, birthday, anniversary, business, group) |
+| Sales | `FOOD_REVENUE`, `WINE_REVENUE`, `OTHER_BEVERAGE_REVENUE`, `TOTAL_REVENUE`, `TIP`, `PAYMENT_METHOD` |
+| Costs | `FOOD_COST`, `BEVERAGE_COST`, `LABOUR_COST` |
 
-Table bookings happen either on the site or in an external booking widget on its own domain without a language.
+Key figures the agent can calculate:
+
+- **Average spend per guest** = `SUM(TOTAL_REVENUE) / SUM(GUESTS)` for completed visits
+- **No-show rate** = no-shows / bookings (walk-ins excluded)
+- **Food cost %** = `SUM(FOOD_COST) / SUM(FOOD_REVENUE)`
+- **Labour cost %** = `SUM(LABOUR_COST) / SUM(TOTAL_REVENUE)`
+- **Prime cost %** = (food cost + beverage cost + labour cost) / total revenue
+
+**About labour cost:** labour is planned per service (restaurant, date and service) and allocated to the completed visits in that service by number of guests. Sums over any slice (a day, a month, a restaurant) therefore give the right labour cost, but the table cannot say how many people worked or who was ill.
 
 ### Built-in findings
 
 The data has patterns the demo can uncover. `data_generator/check_findings.py` confirms they are present:
 
-1. **AI referrals are growing**: from about 1% of sessions in April to about 4% in October.
-2. **Social brings traffic but converts worst** (about 4% of sessions). Paid and email convert best (about 11%).
-3. **Recipes pull traffic but don't convert**: recipe posts are the most read content after the core pages, but only about 5% of their readers convert, against about 10% overall.
-4. **Danish guests book on the spot**: the median time from first visit to a table booking is minutes for Danish visitors and about a day for Swedish, Norwegian and English-speaking visitors.
-5. **Catering takes about a week** from first visit to enquiry.
-6. **Gift cards rise towards Christmas**, helped by email in October.
-7. **Campaign pages work**: visitors who saw the summer terrace or Christmas menu campaign convert about 15% against about 10% overall.
+1. **EMBER has the highest spend per guest** (about DKK 680), MORGEN the lowest (about DKK 260).
+2. **MARE has the highest food cost** (about 37%, seafood is expensive) and **LIVO the lowest** (about 25%).
+3. **EMBER's food cost is climbing**: from 32% through 2025 to about 37% by autumn 2026 (beef prices).
+4. **HAVEN is overstaffed in May and September**: the summer crew starts too early and stays too long, so labour cost is above 40% in those months against about 30% the rest of the season.
+5. **MARE is overstaffed on Mondays and Tuesdays**: labour cost is about 46% on Mondays against about 30% the rest of the week.
+6. **The booking portal has the most no-shows**: about 9%, against 3–4% for the website and phone.
+7. **VERDE is growing**: guests per month are up about 60% from early 2025 to autumn 2026.
+8. **Wine sales drop when it's busy**: wine per guest at dinner is about DKK 120 on the quietest services and about DKK 70 on the busiest.
+9. **The group is growing**: January–October revenue is up about 7% from 2025 to 2026.
+
+Seasonality is built in too: HAVEN is busiest in summer, the city restaurants dip in July and peak with Christmas parties in November and December, and MORGEN is busiest at weekends.
 
 ## Repo structure
 
@@ -56,7 +82,7 @@ app/              Streamlit frontend (coming)
 
    The generator is seeded, so it produces the same data every time.
 
-2. **Set up Snowflake**: run `snowflake/01_setup.sql` in a Snowsight worksheet (replace `<YOUR_USER>` first). It creates a small warehouse with a monthly credit cap, the database `GENERAL_AGENT_DEMO`, the schema `RESTAURANT`, the role `GENERAL_AGENT_ROLE` and the table `WEBSITE_EVENTS`.
+2. **Set up Snowflake**: run `snowflake/01_setup.sql` in a Snowsight worksheet (replace `<YOUR_USER>` first). It creates a small warehouse with a monthly credit cap, the database `GENERAL_AGENT_DEMO`, the schema `RESTAURANT`, the role `GENERAL_AGENT_ROLE` and the table `VISITS`.
 
 3. **Load the data**: follow `snowflake/02_load_data.sql` (Snowsight upload or `PUT`/`COPY`) and run the checks at the bottom.
 

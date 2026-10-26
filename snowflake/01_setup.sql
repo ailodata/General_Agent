@@ -1,4 +1,4 @@
--- Bistro Lind demo: database, schema, warehouse, role and table.
+-- FORK demo: database, schema, warehouse, role and table.
 -- Run once as ACCOUNTADMIN (or a role that can create these objects) in a Snowsight worksheet.
 -- Replace <YOUR_USER> with your Snowflake user name before running.
 
@@ -35,33 +35,31 @@ GRANT ROLE GENERAL_AGENT_ROLE TO USER <YOUR_USER>;
 USE WAREHOUSE GENERAL_AGENT_WH;
 USE SCHEMA GENERAL_AGENT_DEMO.RESTAURANT;
 
--- One row per event: a pageview or a conversion
-CREATE OR REPLACE TABLE WEBSITE_EVENTS (
-  EVENT_ID              VARCHAR   NOT NULL COMMENT 'Unique event id',
-  EVENT_TIME            TIMESTAMP_NTZ NOT NULL COMMENT 'When the event happened',
-  EVENT_TYPE            VARCHAR   NOT NULL COMMENT 'pageview or conversion',
-  VISITOR_ID            VARCHAR   NOT NULL COMMENT 'Anonymous visitor id, stable across sessions',
-  SESSION_ID            VARCHAR   NOT NULL COMMENT 'Session id',
-  MARKET                VARCHAR   COMMENT 'English, Danish, Swedish or Norwegian site',
-  LANGUAGE              VARCHAR   COMMENT 'Page language code; empty on the external booking widget',
-  DEVICE_TYPE           VARCHAR   COMMENT 'mobile, desktop or tablet',
-  VISIT_SOURCE          VARCHAR   COMMENT 'Channel: direct, organic, paid, social, email, referrals, ai-referrals',
-  UTM_SOURCE            VARCHAR,
-  UTM_MEDIUM            VARCHAR,
-  UTM_CAMPAIGN          VARCHAR,
-  REFERRER              VARCHAR,
-  URL_DOMAIN            VARCHAR   COMMENT 'Main site or the external booking widget domain',
-  URL_PATH              VARCHAR,
-  PAGE_TITLE            VARCHAR,
-  CONTENT_TYPE          VARCHAR   COMMENT 'STANDARD_PAGE, LANDING_PAGE, BLOG_POST or LISTING_PAGE',
-  CONTENT_TOPIC         VARCHAR   COMMENT 'Topic of the page, e.g. menu_dinner, blog_recipes, gift_cards',
-  FUNNEL_STAGE          VARCHAR   COMMENT 'top, mid, bottom or other',
-  RESTAURANT_LOCATION   VARCHAR   COMMENT 'City of the restaurant page or of a table booking',
-  CONVERSION_ID         VARCHAR   COMMENT 'Set on conversion events only',
-  CONVERSION_TYPE       VARCHAR   COMMENT 'Table Booked, Gift Card Purchased, Loyalty Signup, Catering Enquiry, Newsletter Signup',
-  CONVERSION_VALUE_EUR  NUMBER(10, 2) COMMENT 'Estimated value in EUR; 0 for signups',
-  PARTY_SIZE            NUMBER(3, 0)  COMMENT 'Guests on a table booking'
+-- One row per table or party: a booking, a walk-in, a cancellation or a no-show. Amounts in DKK ex VAT.
+CREATE OR REPLACE TABLE VISITS (
+  VISIT_ID                VARCHAR   NOT NULL COMMENT 'Unique visit id',
+  RESTAURANT              VARCHAR   NOT NULL COMMENT 'LIVO, VERDE, MORGEN, HAVEN, BISTRO 33, EMBER or MARE',
+  CONCEPT                 VARCHAR   COMMENT 'Restaurant concept, e.g. Italian, Seafood',
+  CITY                    VARCHAR   COMMENT 'City of the restaurant',
+  VISIT_DATE              DATE      NOT NULL COMMENT 'Date of the visit (or of the booking that was cancelled or not shown)',
+  VISIT_TIME              TIME      COMMENT 'Arrival time',
+  SERVICE                 VARCHAR   COMMENT 'brunch, lunch or dinner',
+  GUESTS                  NUMBER(3, 0) COMMENT 'Number of guests (covers)',
+  STATUS                  VARCHAR   COMMENT 'completed, cancelled or no_show',
+  BOOKING_CHANNEL         VARCHAR   COMMENT 'website, phone, booking_portal or walk_in',
+  BOOKING_ID              VARCHAR   COMMENT 'Empty for walk-ins',
+  BOOKED_AT               TIMESTAMP_NTZ COMMENT 'When the booking was made; empty for walk-ins',
+  OCCASION                VARCHAR   COMMENT 'none, birthday, anniversary, business or group',
+  FOOD_REVENUE            NUMBER(12, 2) COMMENT 'Food sales ex VAT; empty unless completed',
+  WINE_REVENUE            NUMBER(12, 2) COMMENT 'Wine sales ex VAT',
+  OTHER_BEVERAGE_REVENUE  NUMBER(12, 2) COMMENT 'Beer, drinks, soft drinks and coffee ex VAT',
+  TOTAL_REVENUE           NUMBER(12, 2) COMMENT 'Food + wine + other beverages ex VAT',
+  TIP                     NUMBER(12, 2) COMMENT 'Tip',
+  PAYMENT_METHOD          VARCHAR   COMMENT 'card, mobile_pay, cash or invoice',
+  FOOD_COST               NUMBER(12, 2) COMMENT 'Cost of goods for the food',
+  BEVERAGE_COST           NUMBER(12, 2) COMMENT 'Cost of goods for wine and other beverages',
+  LABOUR_COST             NUMBER(12, 2) COMMENT 'Labour cost of the service, allocated to completed visits by guests'
 )
-COMMENT = 'Synthetic website events for the fictional restaurant chain Bistro Lind. No real data.';
+COMMENT = 'Synthetic visits for the fictional restaurant group FORK. No real data.';
 
-GRANT SELECT ON TABLE WEBSITE_EVENTS TO ROLE GENERAL_AGENT_ROLE;
+GRANT SELECT ON TABLE VISITS TO ROLE GENERAL_AGENT_ROLE;

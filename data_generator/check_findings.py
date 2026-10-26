@@ -1,4 +1,4 @@
-"""Check that the built-in demo findings are present in data/website_events.csv.
+"""Check that the built-in demo findings are present in data/visits.csv.
 
 Run after generate_data.py:  python data_generator/check_findings.py
 """
@@ -6,48 +6,59 @@ from pathlib import Path
 
 import pandas as pd
 
-DATA = Path(__file__).resolve().parent.parent / "data" / "website_events.csv"
+DATA = Path(__file__).resolve().parent.parent / "data" / "visits.csv"
 
-df = pd.read_csv(DATA, parse_dates=["event_time"])
-pv = df[df.event_type == "pageview"]
-cv = df[df.event_type == "conversion"]
-converters = set(cv.visitor_id)
-overall = len(converters) / df.visitor_id.nunique()
-print(f"Overall visitor conversion rate: {overall:.1%}\n")
+df = pd.read_csv(DATA, parse_dates=["visit_date"])
+done = df[df.status == "completed"].copy()
+done["month"] = done.visit_date.dt.to_period("M")
+pct = lambda s: s.map("{:.1%}".format)
 
 
-def visitor_rate(visitor_ids):
-    visitor_ids = set(visitor_ids)
-    return len(visitor_ids & converters) / len(visitor_ids)
+def kpis(g):
+    rev = g.total_revenue.sum()
+    return pd.Series({
+        "revenue_m": round(rev / 1e6, 2),
+        "guests": g.guests.sum(),
+        "spend_per_guest": round(rev / g.guests.sum()),
+        "food_cost_pct": g.food_cost.sum() / g.food_revenue.sum(),
+        "labour_pct": g.labour_cost.sum() / rev,
+        "prime_cost_pct": (g.food_cost.sum() + g.beverage_cost.sum() + g.labour_cost.sum()) / rev,
+        "wine_per_guest": round(g.wine_revenue.sum() / g.guests.sum()),
+    })
 
 
-print("1. AI referrals grow (share of sessions by month)")
-first = df.sort_values("event_time").groupby("session_id").first()
-share = first.groupby(first.event_time.dt.to_period("M")).visit_source.apply(lambda s: (s == "ai-referrals").mean())
-print(share.map("{:.1%}".format).to_string(), "\n")
+print(f"rows={len(df):,}  completed={len(done):,}\n")
 
-print("2. Conversion rate per session by channel")
-conv_sessions = set(cv.session_id)
-by_channel = first.groupby("visit_source").apply(lambda g: g.index.isin(list(conv_sessions)).mean(), include_groups=False)
-print(by_channel.sort_values().map("{:.1%}".format).to_string(), "\n")
+print("1. Per restaurant")
+per = done.groupby("restaurant").apply(kpis, include_groups=False)
+print(per.to_string(formatters={c: "{:.1%}".format for c in ["food_cost_pct", "labour_pct", "prime_cost_pct"]}), "\n")
 
-print("3. Content: share of pageviews vs visitor conversion rate by topic")
-topic = pv.groupby("content_topic").agg(pageviews=("event_id", "count"), visitors=("visitor_id", "nunique"))
-topic["share_of_pageviews"] = topic.pageviews / len(pv)
-topic["visitor_conversion_rate"] = [visitor_rate(pv[pv.content_topic == t].visitor_id) for t in topic.index]
-print(topic.sort_values("pageviews", ascending=False).head(10).to_string(
-    formatters={"share_of_pageviews": "{:.1%}".format, "visitor_conversion_rate": "{:.1%}".format}), "\n")
+print("2. No-show rate by booking channel")
+booked = df[df.booking_channel != "walk_in"]
+print(pct(booked.groupby("booking_channel").status.apply(lambda s: (s == "no_show").mean())).to_string(), "\n")
 
-print("4. Time to convert (first visit -> conversion), median hours")
-first_seen = df.groupby("visitor_id").event_time.min()
-cv = cv.assign(hours=(cv.event_time - cv.visitor_id.map(first_seen)).dt.total_seconds() / 3600)
-print(cv[cv.conversion_type == "Table Booked"].groupby("market").hours.median().round(1).to_string())
-print(cv.groupby("conversion_type").hours.median().round(1).to_string(), "\n")
+print("3. HAVEN labour % by month (2025)")
+h = done[(done.restaurant == "HAVEN") & (done.visit_date.dt.year == 2025)]
+print(pct(h.groupby(h.visit_date.dt.month).apply(lambda g: g.labour_cost.sum() / g.total_revenue.sum(), include_groups=False)).to_string(), "\n")
 
-print("5. Gift cards per month")
-gifts = cv[cv.conversion_type == "Gift Card Purchased"]
-print(gifts.groupby(gifts.event_time.dt.to_period("M")).size().to_string(), "\n")
+print("4. MARE labour % by weekday (0 = Monday)")
+m = done[done.restaurant == "MARE"]
+print(pct(m.groupby(m.visit_date.dt.weekday).apply(lambda g: g.labour_cost.sum() / g.total_revenue.sum(), include_groups=False)).to_string(), "\n")
 
-print("6. Campaign page viewers vs everyone")
-camp_visitors = pv[pv.content_topic == "campaign_landing"].visitor_id
-print(f"campaign viewers: {visitor_rate(camp_visitors):.1%}  vs overall {overall:.1%}")
+print("5. VERDE guests per month (first and last 3)")
+v = done[done.restaurant == "VERDE"].groupby("month").guests.sum()
+print(pd.concat([v.head(3), v.tail(3)]).to_string(), "\n")
+
+print("6. EMBER food cost % by quarter")
+e = done[done.restaurant == "EMBER"]
+print(pct(e.groupby(e.visit_date.dt.to_period("Q")).apply(lambda g: g.food_cost.sum() / g.food_revenue.sum(), include_groups=False)).to_string(), "\n")
+
+print("7. Wine per guest by how full the service was (dinner)")
+d = done[done.service == "dinner"]
+svc = d.groupby(["restaurant", "visit_date"]).agg(guests=("guests", "sum"), wine=("wine_revenue", "sum")).reset_index()
+svc["fullness"] = svc.groupby("restaurant").guests.transform(lambda s: pd.qcut(s, 4, labels=["quietest", "q2", "q3", "busiest"]))
+print(svc.groupby("fullness", observed=True).apply(lambda g: round(g.wine.sum() / g.guests.sum()), include_groups=False).to_string(), "\n")
+
+print("8. Year over year, Jan-Oct revenue (m DKK)")
+ytd = done[done.visit_date.dt.month <= 10]
+print((ytd.groupby(ytd.visit_date.dt.year).total_revenue.sum() / 1e6).round(1).to_string())
