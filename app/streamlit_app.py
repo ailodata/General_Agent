@@ -700,7 +700,6 @@ st.markdown(
        on hover and takes no room otherwise (like the Claude app). */
     [class*="st-key-ailo_threads"] {
         gap: 0 !important;
-        margin-top: -0.25rem !important;  /* a little tighter to the search field */
         /* wider than the sidebar's padding so the hover bar sits closer to the edges */
         width: auto !important;
         max-width: none !important;
@@ -791,8 +790,11 @@ st.markdown(
         overflow-y: auto !important;
         width: auto !important;
         max-width: none !important;
-        margin: 0 -20px 0 -0.6rem;   /* the scrollbar sits at the very edge of the sidebar */
-        padding: 0 20px 0 0.6rem;     /* ...and the list keeps its usual width */
+        /* the scrollbar sits at the very edge of the sidebar, and the list keeps its usual width.
+           The list sits a little tighter to the search field; the matching top padding keeps the
+           selected chat's rounded box from being clipped by the scroll area. */
+        margin: -0.25rem -20px 0 -0.6rem;
+        padding: 0.25rem 20px 0 0.6rem;
         scrollbar-width: thin;
         scrollbar-color: #CFCBC3 transparent;
     }
