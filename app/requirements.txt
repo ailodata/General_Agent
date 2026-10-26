@@ -1,0 +1,6 @@
+streamlit[auth]==1.66.0
+requests
+pandas
+openpyxl
+Authlib
+httpx

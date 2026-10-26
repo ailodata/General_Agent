@@ -67,7 +67,7 @@ data_generator/   generate_data.py (creates the data) and check_findings.py (ver
 data/             generated CSV (not committed; recreate it with the generator)
 snowflake/        SQL to set up the database, role, warehouse and table, and to load the data
 agent/            semantic view YAML, agent instructions, sample questions and build_sql.py
-app/              Streamlit frontend (coming)
+app/              Streamlit app (AILO-branded, Google sign-in) that talks to the agent
 ```
 
 ## Getting started
@@ -90,6 +90,15 @@ app/              Streamlit frontend (coming)
 
 5. **Create the agent**: run `snowflake/04_agent.sql`. It creates `FORK_AGENT` with the semantic view as its tool and grants it to `GENERAL_AGENT_ROLE`.
 
+6. **Create the app's service user**: run `snowflake/06_app_user.sql` as ACCOUNTADMIN and copy the token it prints.
+
+7. **Run the app locally**: copy `app/.streamlit/secrets.example.toml` to `app/.streamlit/secrets.toml`, fill in the host and token, then:
+
+   ```bash
+   pip install -r app/requirements.txt
+   streamlit run app/streamlit_app.py
+   ```
+
 The SQL files in step 4 and 5 are generated. Edit the files in `agent/` and run `python agent/build_sql.py` to rebuild them.
 
 ## Status
@@ -98,6 +107,6 @@ The SQL files in step 4 and 5 are generated. Edit the files in `agent/` and run 
 - [x] Snowflake setup and loading SQL
 - [x] Semantic view
 - [x] Agent instructions and agent
-- [ ] Streamlit app with configurable branding
+- [x] Streamlit app with configurable branding
 - [ ] Deploy
 - [ ] Testing and demo material (script, example questions, screenshots)
