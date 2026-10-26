@@ -1,0 +1,15 @@
+# Generated data (recreate with data_generator/generate_data.py)
+data/*.csv
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Secrets
+.env
+.streamlit/secrets.toml
+
+# OS
+.DS_Store
