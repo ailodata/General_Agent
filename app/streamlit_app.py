@@ -1303,7 +1303,14 @@ def current_user_email():
                 return st.user.get("email")
         except Exception:
             return None
-    return None
+        return None
+    # Without [auth], access is managed by Streamlit Cloud's sharing, which tells the app who the
+    # signed-in viewer is. Locally Streamlit reports a placeholder address, which we ignore.
+    try:
+        email = st.user.get("email")
+    except Exception:
+        return None
+    return email if email and email != "test@example.com" else None
 
 
 def user_key(email):
