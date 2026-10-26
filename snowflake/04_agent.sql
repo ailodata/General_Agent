@@ -144,8 +144,8 @@ instructions:
     - question: "Which weekdays are overstaffed at MARE?"
     - question: "Which restaurant has the highest prime cost, and what drives it?"
     - question: "How does HAVEN's revenue and labour cost change through the seasons?"
-    - question: "Hvilken restaurant vokser mest, og hvor meget?"
-    - question: "Hvor meget vin s\u00e6lger vi pr. g\u00e6st, og falder det, n\u00e5r der er travlt?"
+    - question: "Which restaurant is growing the most, and by how much?"
+    - question: "How much wine do we sell per guest, and does it drop when we're busy?"
 
 tools:
   - tool_spec:
