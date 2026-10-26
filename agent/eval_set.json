@@ -1,0 +1,42 @@
+[
+  {
+    "question": "How is each restaurant performing this year?",
+    "expected": "Covers 1 January to 25 October 2026 and shows one row per restaurant (all seven) with revenue, guests, spend per guest and cost percentages. HAVEN has the highest revenue (about DKK 25.0m), followed by EMBER (about DKK 22.5m) and LIVO (about DKK 21.0m); MORGEN is lowest (about DKK 8.1m). EMBER has the highest spend per guest (about DKK 698) and MORGEN the lowest (about DKK 264). MARE has the highest prime cost (about 68.4%) and LIVO the lowest (about 54.8%)."
+  },
+  {
+    "question": "Which restaurant has the highest labour cost percentage, and how does it develop month by month?",
+    "expected": "Over the full period (2 January 2025 to 25 October 2026) MORGEN has the highest labour cost % at about 35.5%, followed by VERDE (about 33.5%), MARE (about 32.6%) and HAVEN (about 32.5%); LIVO is lowest (about 29.1%). The monthly development is shown as a line chart or table by month and says that October 2026 is a partial month."
+  },
+  {
+    "question": "How has food cost developed at EMBER?",
+    "expected": "EMBER's food cost % was stable at about 32% through 2025 and has risen through 2026: about 32.9% in Q1, 34.6% in Q2, 36.4% in Q3 and 37.4% in Q4 2026 (up to 25 October). The answer frames the rise as an observation, not a confirmed cause."
+  },
+  {
+    "question": "Which booking channel has the most no-shows?",
+    "expected": "The booking portal has the most no-shows: about 8.8% of its bookings (about 3,744 no-shows out of 42,605 bookings), against about 3.6% for the website and 3.2% for phone. Walk-ins are excluded from the rate. Period is 2 January 2025 to 25 October 2026."
+  },
+  {
+    "question": "How does revenue this year compare with the same period last year?",
+    "expected": "Compares 1 January to 25 October in both years: revenue is about DKK 119.7m in 2026 against about DKK 109.6m in 2025, up about 9%. VERDE grows the most (about 32%), MARE the least (about 4.5%); the other restaurants grow about 7-8%."
+  },
+  {
+    "question": "Which weekdays are overstaffed at MARE?",
+    "expected": "Monday and Tuesday stand out at MARE: labour cost % is about 45.8% on Mondays and 37.4% on Tuesdays, against about 28-33% on the other days, while Mondays and Tuesdays have the fewest guests (about 53 and 66 per day against 116-133 on Fridays and Saturdays). The answer frames overstaffing as something to look at, and says it is based on labour cost %, not staff counts."
+  },
+  {
+    "question": "Which restaurant has the highest prime cost, and what drives it?",
+    "expected": "MARE has the highest prime cost at about 67.2% over the full period. The main driver is food cost of about 37.1%, the highest in the group (LIVO is lowest at about 25.0%), with labour cost of about 32.6% also above most restaurants. LIVO has the lowest prime cost at about 54.8%."
+  },
+  {
+    "question": "How does HAVEN's revenue and labour cost change through the seasons?",
+    "expected": "HAVEN is strongly seasonal: revenue peaks in July (about DKK 4.1m per month) and is lowest in January and February (about DKK 1.0-1.1m). Labour cost % is around 29-31% in June to August but jumps to about 43% in May and about 47% in September, when the summer staffing does not match the lower number of guests. The answer shows monthly figures as a chart or table."
+  },
+  {
+    "question": "Hvilken restaurant vokser mest, og hvor meget?",
+    "expected": "Answers in Danish. VERDE grows the most: revenue is up about 32% from 1 January to 25 October 2026 compared with the same period in 2025 (about 13.2 mio. kr. against about 10.0 mio. kr.). The other restaurants grow about 4.5-8%."
+  },
+  {
+    "question": "Hvor meget vin sælger vi pr. gæst, og falder det, når der er travlt?",
+    "expected": "Answers in Danish. Wine sales are about 78 kr. per guest across the group (about 17% of revenue), highest at EMBER (about 112 kr.) and lowest at MORGEN (about 11 kr.). Yes, wine per guest drops when it is busy: at dinner it is about 120 kr. on the quietest services and about 70 kr. on the busiest. The answer describes this as a pattern, not a proven cause."
+  }
+]

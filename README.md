@@ -56,7 +56,7 @@ The data has patterns the demo can uncover. `data_generator/check_findings.py` c
 6. **The booking portal has the most no-shows**: about 9%, against 3–4% for the website and phone.
 7. **VERDE is growing**: guests per month are up about 60% from early 2025 to autumn 2026.
 8. **Wine sales drop when it's busy**: wine per guest at dinner is about DKK 120 on the quietest services and about DKK 70 on the busiest.
-9. **The group is growing**: January–October revenue is up about 7% from 2025 to 2026.
+9. **The group is growing**: revenue from 1 January to 25 October is up about 9% from 2025 to 2026.
 
 Seasonality is built in too: HAVEN is busiest in summer, the city restaurants dip in July and peak with Christmas parties in November and December, and MORGEN is busiest at weekends.
 
